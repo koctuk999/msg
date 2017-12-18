@@ -10,7 +10,6 @@ from PyQt5.QtWidgets import QApplication,QWidget,QPushButton,\
     QGridLayout,QLabel,QTextEdit,QLineEdit,QMessageBox,QRadioButton
 import os
 f=False #флаг закрытия
-
 class recv_msg(Thread):
     """Поток для приёма сообщений"""
     def run(self):
@@ -23,11 +22,11 @@ class recv_msg(Thread):
             data=pickle.loads(data)#распаковка
             QMessageBox.information(ex,'Информация','Новое сообщение от {0}'
             ' \n Время отправки: {1} \n Идентификатор: {2}'.format(addr[0],data[1],data[0]))
-            ex.rec_msg.append("<b style=color:#ff0000>{0}</b>({1}): <i>{2}</i>".format(addr[0],data[1],data[2]))#добавление данных в TextEdit
+            ex.rec_msg.append("<b style=color:#ff0000>{0}</b>({1}): <i>{2}</i>".format(
+                addr[0],data[1],data[2]))#добавление данных в TextEdit
             if f: #если флаг установлен -
                 sock.close() #закрытие сокета
                 break#выход из цикла
-
 class Example(QWidget):
     """Окно приложения"""
     def __init__(self):
@@ -106,11 +105,10 @@ class Example(QWidget):
         data=(id,t,text)
         self.rec_msg.append("Я:{0}".format(text))
         sock.sendto(pickle.dumps(data), addr)
-
     def closeEvent(self,event):
         """Закрытие приложения"""
-        reply = QMessageBox.question(self, 'Message', "Вы точно хотите выйти?", QMessageBox.Yes | QMessageBox.No,
-                                     QMessageBox.Yes)
+        reply = QMessageBox.question(self, 'Message', "Вы точно хотите выйти?",
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
         if reply == QMessageBox.Yes:
             f = True
             return f
