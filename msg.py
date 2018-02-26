@@ -36,7 +36,7 @@ class Example(QWidget):
         grid=QGridLayout()
         self.ed_ip=QLineEdit()#ввод ip
         self.ed_ip.setFixedSize(self.ed_ip.sizeHint())
-        self.ed_ip.setToolTip('Введите IP и нажмите ENTER')
+        self.ed_ip.setToolTip('<i>Введите IP и нажмите ENTER</i>')
         self.ed_msg=QLineEdit("Введите сообщение",self)
         self.rec_msg = QTextEdit()#ввод сообщения для отправки
         self.rec_msg.setReadOnly(True)
