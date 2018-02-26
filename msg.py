@@ -81,7 +81,7 @@ class Example(QWidget):
         try:
             for i in ip: i=int(i)
             if len(ip)== 4:
-                resp=os.system("ping -c 1 -i 0.5 " + ".".join(ip)) #Проверка доступности
+                resp=os.system("ping -c 1 -i 0.2 " + ".".join(ip)) #Проверка доступности
                 if resp == 0:
                     self.btn_send.setEnabled(True)
                     self.ind.setStyleSheet("background-color: #00FF00")
