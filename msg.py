@@ -46,13 +46,13 @@ class Example(QWidget):
         self.btn_send.setToolTip('Чтобы активировать кнопку введите IP')
         self.ed_ip.editingFinished.connect(self.btnen)  # сигнал-проверка ip
         self.btn_send.clicked.connect(self.sendmsg)#сигнал клика
-        lab1=QLabel('IP-получателя',self)
+        lab1=QLabel('<b>IP-получателя</b>',self)
         lab1.setFixedSize(lab1.sizeHint())
-        lab2=QLabel('Исходящее cообщение',self)
+        lab2=QLabel('<b>Исходящее cообщение</b>',self)
         lab2.setFixedSize(lab2.sizeHint())
-        lab3=QLabel('Чат',self)
+        lab3=QLabel('<b>Чат</b>',self)
         lab3.setFixedSize(lab3.sizeHint())
-        lab4=QLabel("Доступность: ",self)
+        lab4=QLabel("<b>Доступность: </b>",self)
         self.ind=QRadioButton()
         self.ind.setEnabled(False)
         self.ind.setStyleSheet("background-color: red")
