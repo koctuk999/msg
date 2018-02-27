@@ -7,7 +7,7 @@ from datetime import datetime
 import pickle
 from threading import Thread
 from PyQt5.QtWidgets import QApplication,QWidget,QPushButton,\
-    QGridLayout,QLabel,QTextEdit,QLineEdit,QMessageBox,QRadioButton
+    QGridLayout,QLabel,QTextEdit,QLineEdit,QMessageBox,QFrame
 import os
 f=False #флаг закрытия
 class recv_msg(Thread):
@@ -53,8 +53,9 @@ class Example(QWidget):
         lab3=QLabel('<b>Чат</b>',self)
         lab3.setFixedSize(lab3.sizeHint())
         lab4=QLabel("<b>Доступность: </b>",self)
-        self.ind=QRadioButton()
-        self.ind.setEnabled(False)
+        self.ind=QFrame(self)
+        self.ind.setFrameShape(QFrame.StyledPanel)
+        self.ind.setFixedSize(7,7)
         self.ind.setStyleSheet("background-color: red")
         grid.addWidget(self.ed_ip,1,0)
         grid.addWidget(lab4,1,1)
