@@ -8,11 +8,17 @@ import pickle
 from threading import Thread
 from PyQt5.QtWidgets import QApplication,QWidget,QPushButton,\
     QGridLayout,QLabel,QTextEdit,QLineEdit,QMessageBox,QFrame
+from PyQt5.QtCore import QThread,pyqtSignal
 import os
 f=False #флаг закрытия
-class recv_msg(Thread):
+
+class recv_msg(QThread):
     """Поток для приёма сообщений"""
+    rm = pyqtSignal(list)
+    def __init__(self):
+        super().__init__()
     def run(self):
+
         sock = socket(AF_INET,SOCK_DGRAM)#UDP сокет
         host = '' #хост для всех интерфейсов
         port = 9090
@@ -20,13 +26,12 @@ class recv_msg(Thread):
         while True:
             data, addr =sock.recvfrom(1024)#приём данных по 1кБ
             data=pickle.loads(data)#распаковка
-            QMessageBox.information(ex,'Информация','Новое сообщение от {0}'
-            ' \n Время отправки: {1} \n Идентификатор: {2}'.format(addr[0],data[1],data[0]))
-            ex.rec_msg.append("<b style=color:#ff0000>{0}</b>({1}): <i>{2}</i>".format(
-                addr[0],data[1],data[2]))#добавление данных в TextEdit
+            data.append(addr[0])
+            self.rm.emit(data)
             if f: #если флаг установлен -
                 sock.close() #закрытие сокета
                 break#выход из цикла
+
 class Example(QWidget):
     """Окно приложения"""
     def __init__(self):
@@ -70,12 +75,15 @@ class Example(QWidget):
         self.setWindowTitle("Simple-chat")
         self.setFixedSize(380,500)
         self.setStyleSheet("background-color: #3399FF; color: #000033")
+        self.setWindowOpacity(0.9)
         self.ed_ip.setStyleSheet("background-color: #33CCFF")
         self.rec_msg.setStyleSheet("background-color: #33CCFF")
         self.ed_msg.setStyleSheet("background-color: #33CCFF")
         self.btn_send.setStyleSheet("background-color: #33FFFF")
         self.show()
-        recv_msg().start()#старт потока приёма
+        self.thread=recv_msg()
+        self.thread.rm.connect(self.recmsg)
+        self.thread.start()#старт потока приёма
     def btnen(self):
         """Слот-проверка ip адреса"""
         ip=self.ed_ip.text().split('.')
@@ -103,16 +111,21 @@ class Example(QWidget):
         text=self.ed_msg.text()
         id=randint(1,10000)
         t=str(datetime.now(tz=None)).split(" ")[1].split(".")[0] #преобразование времени ЧЧ:ММ:СС
-        data=(id,t,text)
+        data=[id,t,text]
         self.rec_msg.append("Я:{0}".format(text))
         sock.sendto(pickle.dumps(data), addr)
+    def recmsg(self,value):
+
+     QMessageBox.information(self,'Информация','Новое сообщение от {0}'
+     ' \n Время отправки: {1} \n Идентификатор: {2}'.format(value[3],value[1],value[0]))
+     self.rec_msg.append("<b style=color:#ff0000>{0}</b>({1}): <i>{2}</i>".format(
+        value[3],value[1],value[2]))#добавление данных в TextEdit
     def closeEvent(self,event):
         """Закрытие приложения"""
         reply = QMessageBox.question(self, 'Message', "Вы точно хотите выйти?",
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
         if reply == QMessageBox.Yes:
             f = True
-            return f
             event.accept()
         else:
             event.ignore()
